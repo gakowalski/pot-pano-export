@@ -15,14 +15,14 @@ $decompiler = "f:/\"Program Files (x86)\"/FFDec/ffdec.jar";
 /* TARGETS */
 $options = array(
   'Flash Panorama Player' => array(
-    $target_base = 'https://www.example.com/panoramas/';
-    $languages => array('en', 'fr', 'de'),
-    $language_token => '??',
+    'target_base' => 'https://www.example.com/panoramas/',
+    'languages' => array('en', 'fr', 'de'),
+    'language_token' => '??',
   ),
   'Kolor Pantour 1.7.2' => array(
-    $target_base = 'https://www.example.com/panoramas/';
-    $languages => array('en', 'fr', 'de'),
-    $language_token => '??',
+    'target_base' => 'https://www.example.com/panoramas/',
+    'languages' => array('en', 'fr', 'de'),
+    'language_token' => '??',
   ),
 );
 
