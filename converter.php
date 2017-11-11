@@ -1,8 +1,10 @@
 <?php
 
 class Converter {
-  public function __construct($options) {
+  public $options;
 
+  public function __construct($options) {
+    $this->options = $options;
   }
 
   public function convert($target) {
