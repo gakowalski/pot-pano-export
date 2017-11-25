@@ -23,8 +23,10 @@ class Kolor_Pantour extends Converter {
       $this->prepare_file("$target_directory/$file", $this->target_url("$target/$server_path", $this->options['languages'][0]));
     }
 
+    $this->prepare_archive("$target_directory/object0.swf", $target_directory);
+
     $language_dependent = array(
-      
+
     );
 
     foreach ($this->options['languages'] as $language) {
@@ -33,6 +35,28 @@ class Kolor_Pantour extends Converter {
       foreach ($language_dependent as $server_path => $file) {
         $this->prepare_file("$language_directory/$file", $this->target_url("$target/$server_path", $language));
       }
+    }
+  }
+
+  protected function archive_directory($path) {
+    return md5($path);
+  }
+
+  protected function prepare_archive($path, $destination) {
+    global $java;
+    global $decompiler;
+    if (true === file_exists($path)) {
+      $uncompressed = "$destination/" . $this->archive_directory($path);
+      if (false === file_exists($uncompressed)) {
+        echo "Decompressing $path...\n";
+        $decompile_command = "$java -jar $decompiler -cli -export sound,text $uncompressed $path";
+        //var_dump($decompile_command);
+        system($decompile_command);
+      } else {
+        echo "$path already decompressed\n";
+      }
+    } else {
+      throw new Exception("$path not found");
     }
   }
 }
