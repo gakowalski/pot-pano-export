@@ -15,7 +15,7 @@ class Kolor_Pantour extends Converter {
       'virtualtour.xml' => 'virtualtour.xml',
       'virtualtour0.xml' => 'virtualtour0.xml',
       'virtualtourdata/sounds/sound0.mp3' => 'sound0.mp3',
-      'virtualtourdata/graphics/spots/object0.swf' => 'object0.swf',
+      //'virtualtourdata/graphics/spots/object0.swf' => 'object0.swf',
       'mapa.png' => 'mapa.png',
     );
 
@@ -23,22 +23,62 @@ class Kolor_Pantour extends Converter {
       $this->prepare_file("$target_directory/$file", $this->target_url("$target/$server_path", $this->options['languages'][0]));
     }
 
+    $language_dependent = array();
+
+    $vt = $this->process_vt("$target_directory/virtualtour.xml");
+    //$this->process_vt0("$target_directory/virtualtour0.xml", $target, $this->options['languages'][0]);
     $this->prepare_archive("$target_directory/object0.swf", $target_directory);
-    $this->process_vt0("$target_directory/virtualtour0.xml", $target, $this->options['languages'][0]);
 
-
-    $language_dependent = array(
-
-    );
+    $language_dependent = $language_dependent + $vt;
+    //var_dump($language_dependent);
+    //exit;
 
     foreach ($this->options['languages'] as $language) {
       $language_directory = "$target_directory/$language";
       $this->prepare_folder($language_directory);
       foreach ($language_dependent as $server_path => $file) {
+        if ($language == 'pl' && $file == 'infodata.swf') {
+          continue;
+        }
         $this->prepare_file("$language_directory/$file", $this->target_url("$target/$server_path", $language));
       }
 
-      //$this->prepare_archive("$language_directory/infodata.swf", $language_directory);
+      if ($language == 'pl') {
+        $server_path = 'virtualtourdata/graphics/spots/object0.swf';
+        $this->prepare_file("$language_directory/infodata.swf", $this->target_url("$target/$server_path", $language));
+      }
+
+      $this->prepare_archive("$language_directory/infodata.swf", $language_directory);
+    }
+  }
+
+  protected function process_vt($path = 'virtualtour.xml') {
+    if (true === file_exists($path)) {
+      $vt = new SimpleXMLElement(file_get_contents($path));
+      if ($vt) {
+        $to_download = array();
+
+        foreach ($vt->plugin as $plugin) {
+    			if ($plugin['name'] == 'maps') {
+    				echo '[.] ' . $plugin['lat'] . ',' . $plugin['lng'] . "\n";
+    				echo '[.] ' . $plugin->spot['lat'] . ',' . $plugin->spot['lng'] . "\n";
+    			}
+          if ($plugin['name'] == 'helpScreen') {
+            $to_download[$plugin['url']->__toString()] = 'infodata.swf';
+    			}
+          /*
+          if ($plugin['name'] == 'tytul') {
+            $to_download[$plugin['url']->__toString()] = 'title.png';
+    			}
+          */
+    		}
+
+        return $to_download;
+      } else {
+        throw new Exception("Cannot process $path as SimpleXMLElement");
+      }
+    } else {
+      throw new Exception("$path not found");
     }
   }
 
