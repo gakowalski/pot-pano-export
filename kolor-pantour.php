@@ -15,7 +15,6 @@ class Kolor_Pantour extends Converter {
       'virtualtour.xml' => 'virtualtour.xml',
       'virtualtour0.xml' => 'virtualtour0.xml',
       'virtualtourdata/sounds/sound0.mp3' => 'sound0.mp3',
-      //'virtualtourdata/graphics/spots/object0.swf' => 'object0.swf',
       'mapa.png' => 'mapa.png',
     );
 
@@ -26,12 +25,10 @@ class Kolor_Pantour extends Converter {
     $language_dependent = array();
 
     $vt = $this->process_vt("$target_directory/virtualtour.xml");
-    //$this->process_vt0("$target_directory/virtualtour0.xml", $target, $this->options['languages'][0]);
+    $this->process_vt0("$target_directory/virtualtour0.xml", $target, $this->options['languages'][0]);
     $this->prepare_archive("$target_directory/object0.swf", $target_directory);
 
     $language_dependent = $language_dependent + $vt;
-    //var_dump($language_dependent);
-    //exit;
 
     foreach ($this->options['languages'] as $language) {
       $language_directory = "$target_directory/$language";
