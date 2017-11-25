@@ -24,6 +24,8 @@ class Kolor_Pantour extends Converter {
     }
 
     $this->prepare_archive("$target_directory/object0.swf", $target_directory);
+    $this->process_vt0("$target_directory/virtualtour0.xml", $target, $this->options['languages'][0]);
+
 
     $language_dependent = array(
 
@@ -35,8 +37,85 @@ class Kolor_Pantour extends Converter {
       foreach ($language_dependent as $server_path => $file) {
         $this->prepare_file("$language_directory/$file", $this->target_url("$target/$server_path", $language));
       }
+
+      //$this->prepare_archive("$language_directory/infodata.swf", $language_directory);
     }
   }
+
+  protected function process_vt0($path = 'virtualtour0.xml', $target, $language) {
+    if (true === file_exists($path)) {
+      $vt0 = new SimpleXMLElement(file_get_contents($path));
+      if ($vt0) {
+        $image = $vt0->image;
+        $tile_size = $image['tilesize'];
+        echo "[.] Tile size: $tile_size\n";
+        $highest_level = $image->level[0];
+        echo "[.] Wall width: ". $highest_level['tiledimagewidth'] . "\n";
+        echo "[.] Wall height: ". $highest_level['tiledimageheight'] . "\n";
+
+        $left = $highest_level->left['url'];
+        $right = $highest_level->right['url'];
+        $up = $highest_level->up['url'];
+        $down = $highest_level->down['url'];
+        $front = $highest_level->front['url'];
+        $back = $highest_level->back['url'];
+
+        $left = $this->horizontal_merge_list($left, 'left', dirname($path), $target, $language);
+        $right = $this->horizontal_merge_list($right, 'right', dirname($path), $target, $language);
+        $up = $this->horizontal_merge_list($up, 'up', dirname($path), $target, $language);
+        $down = $this->horizontal_merge_list($down, 'down', dirname($path), $target, $language);
+        $front = $this->horizontal_merge_list($front, 'front', dirname($path), $target, $language);
+        $back = $this->horizontal_merge_list($back, 'back', dirname($path), $target, $language);
+      } else {
+        throw new Exception("Cannot process $path as SimpleXMLElement");
+      }
+    } else {
+      throw new Exception("$path not found");
+    }
+  }
+
+  protected	function horizontal_merge_list($pattern, $position = 'tile', $target_directory, $target, $language) {
+		global $irfan_view;
+
+		for ($v = 0; $v < 4; $v++) {
+			echo "[$position] Merge horizontal \n";
+			$files = array();
+			for ($u = 0; $u < 4; $u++) {
+        $path = strtr($pattern, array('%v' => $v, '%u' => $u));
+        $this->prepare_folder("$target_directory/$position");
+        $this->prepare_file("$target_directory/$position/{$v}_$u.jpg", $this->target_url("$target/$path", $language));
+				$path = realpath("$target_directory/$position/{$v}_$u.jpg");
+				//echo "\t$path\n";
+				$files[] = $path;
+			}
+			$result = str_replace('_0', '_merged', $files[0]);
+			$files = implode(',', $files);
+			if (false === file_exists($result)) {
+				system("$irfan_view /panorama=(1,$files) /convert=$result");
+			} else {
+				echo "[$position] Already merged\n";
+			}
+		}
+
+		echo "[$position] Merge vertical \n";
+		$files = array();
+		for ($v = 0; $v < 4; $v++) {
+      //$path = strtr($pattern, array('%v' => $v, '%u' => 'merged'));
+			$path = realpath("$target_directory/$position/{$v}_merged.jpg");
+			//echo "\t$path\n";
+			$files[] = $path;
+		}
+		$result = realpath($target_directory) . "\\$position.jpg";
+		$files = implode(',', $files);
+    //echo "$irfan_view /panorama=(2,$files) /convert=$result";
+		if (false === file_exists($result)) {
+			system("$irfan_view /panorama=(2,$files) /convert=$result");
+		} else {
+			echo "[$position] Already merged\n";
+		}
+
+		return $result;
+	}
 
   protected function archive_directory($path) {
     return md5($path);
