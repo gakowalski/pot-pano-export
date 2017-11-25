@@ -5,14 +5,16 @@ class Flash_Panorama_Player extends Converter {
     global $download_directory;
     global $output_directory;
 
+    parent::convert($target);
+
     $hash = md5($target);
     $target_directory = "$download_directory/$hash";
+    $this->prepare_folder($target_directory);
 
-    if (false === file_exists($target_directory)) {
-      echo "$target_directory does not exist, creating...\n";
-      mkdir($target_directory);
-    } else {
-      echo "$target_directory already exists\n";
+    foreach ($this->options['languages'] as $language) {
+      $language_directory = "$target_directory/$language";
+      $this->prepare_folder($language_directory);
+      $this->prepare_file("$language_directory/index.html", $this->target_url($target, $language));
     }
   }
 }
