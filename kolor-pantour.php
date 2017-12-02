@@ -26,7 +26,6 @@ class Kolor_Pantour extends Converter {
 
     $vt = $this->process_vt("$target_directory/virtualtour.xml");
     $this->process_vt0("$target_directory/virtualtour0.xml", $target, $this->options['languages'][0]);
-    $this->prepare_archive("$target_directory/object0.swf", $target_directory);
 
     $language_dependent = $language_dependent + $vt;
 
@@ -63,11 +62,6 @@ class Kolor_Pantour extends Converter {
           if ($plugin['name'] == 'helpScreen') {
             $to_download[$plugin['url']->__toString()] = 'infodata.swf';
     			}
-          /*
-          if ($plugin['name'] == 'tytul') {
-            $to_download[$plugin['url']->__toString()] = 'title.png';
-    			}
-          */
     		}
 
         return $to_download;
@@ -122,7 +116,6 @@ class Kolor_Pantour extends Converter {
         $this->prepare_folder("$target_directory/$position");
         $this->prepare_file("$target_directory/$position/{$v}_$u.jpg", $this->target_url("$target/$path", $language));
 				$path = realpath("$target_directory/$position/{$v}_$u.jpg");
-				//echo "\t$path\n";
 				$files[] = $path;
 			}
 			$result = str_replace('_0', '_merged', $files[0]);
@@ -137,14 +130,12 @@ class Kolor_Pantour extends Converter {
 		echo "[$position] Merge vertical \n";
 		$files = array();
 		for ($v = 0; $v < 4; $v++) {
-      //$path = strtr($pattern, array('%v' => $v, '%u' => 'merged'));
 			$path = realpath("$target_directory/$position/{$v}_merged.jpg");
-			//echo "\t$path\n";
 			$files[] = $path;
 		}
 		$result = realpath($target_directory) . "\\$position.jpg";
 		$files = implode(',', $files);
-    //echo "$irfan_view /panorama=(2,$files) /convert=$result";
+
 		if (false === file_exists($result)) {
 			system("$irfan_view /panorama=(2,$files) /convert=$result");
 		} else {
@@ -166,7 +157,6 @@ class Kolor_Pantour extends Converter {
       if (false === file_exists($uncompressed)) {
         echo "Decompressing $path...\n";
         $decompile_command = "$java -jar $decompiler -cli -export sound,text $uncompressed $path";
-        //var_dump($decompile_command);
         system($decompile_command);
       } else {
         echo "$path already decompressed\n";
