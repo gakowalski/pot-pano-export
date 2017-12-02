@@ -42,6 +42,29 @@ class Flash_Panorama_Player extends Converter {
       $this->prepare_file("$target_directory/$file", $this->target_url("$target_base/$server_path", ''));
     }
 
+    $this->process_image("$target_directory/data.jpg", $target_directory);
+  }
+
+  protected function process_image($path, $target_directory) {
+    global $irfan_view;
+
+    if (true === file_exists($path)) {
+      $realpath = realpath($path);
+      $tile_length = 1250;
+      $positions = array('front', 'right', 'back', 'left', 'up', 'down');
+      for ($i = 0, $x = 0; $i < 6; $i++, $x += $tile_length) {
+        $position = $positions[$i];
+        $result = realpath($target_directory) . "\\$position.jpg";
+        if (false === file_exists($result)) {
+          echo "[$position] Cropping\n";
+    			system("$irfan_view $realpath /crop=($x,0,$tile_length,$tile_length,0) /convert=$result");
+    		} else {
+    			echo "[$position] Already cropped\n";
+    		}
+      }
+    } else {
+      throw new Exception("$path not found");
+    }
   }
 
   protected function process_data($path, $common_files, $language) {
