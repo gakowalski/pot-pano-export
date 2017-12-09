@@ -1,6 +1,7 @@
 <?php
 
 require 'config.php';
+require 'vendor/autoload.php';
 require 'converter.php';
 
 foreach ($targets as $format => $targets) {
@@ -21,5 +22,6 @@ foreach ($targets as $format => $targets) {
 
   foreach ($targets as $target) {
     $converter->convert($target);
+    $converter->prepare_output($target);
   }
 }

@@ -14,7 +14,7 @@ class Kolor_Pantour extends Converter {
     $common_files = array(
       'virtualtour.xml' => 'virtualtour.xml',
       'virtualtour0.xml' => 'virtualtour0.xml',
-      'virtualtourdata/sounds/sound0.mp3' => 'sound0.mp3',
+      'virtualtourdata/sounds/sound0.mp3' => 'music.mp3',
       'mapa.png' => 'mapa.png',
     );
 

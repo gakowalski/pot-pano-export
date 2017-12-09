@@ -1,5 +1,7 @@
 <?php
 
+use Cocur\Slugify\Slugify;
+
 class Converter {
   protected $options;
 
@@ -45,5 +47,68 @@ class Converter {
   public function target_url($target, $language) {
     $url = "{$this->options['target_base']}$target";
     return strtr($url, array($this->options['language_token'] => $language));
+  }
+
+  public function get_title($target, $language) {
+    global $translations_directory;
+    global $translations_cache;
+
+    $path = "$translations_directory/$language.xml";
+
+    if (!isset($translations_cache[$language])) {
+      if (true === file_exists($path)) {
+        $xml = new SimpleXMLElement(file_get_contents($path));
+        if ($xml) {
+          foreach ($xml->item as $item) {
+            $translations_cache[$language][] = array(
+              'url' => $item->url->__toString(),
+              'desc' => $item->desc->__toString(),
+            );
+          }
+        } else {
+          throw new Exception("Cannot process $path as SimpleXMLElement");
+        }
+      } else {
+        throw new Exception("$path not found");
+      }
+    }
+
+    $needle = strtr($target, array($this->options['language_token'] => $language));
+
+    foreach ($translations_cache[$language] as $item) {
+      if (false !== strstr($item['url'], $needle)) {
+        return $item['desc'];
+      }
+    }
+
+    return null;
+  }
+
+  public function prepare_output($target) {
+    global $download_directory;
+    global $output_directory;
+
+    $title = $this->get_title($target, 'pl');
+    $slugify = new Slugify();
+    $slug = $slugify->slugify($title);
+    $this->prepare_folder("$output_directory/$slug");
+
+    $hash = md5($target);
+    $target_directory = "$download_directory/$hash";
+
+    $to_copy = array(
+      'back.jpg',
+      'front.jpg',
+      'right.jpg',
+      'up.jpg',
+      'down.jpg',
+      'left.jpg',
+      'music.mp3',
+    );
+
+    foreach ($to_copy as $file) {
+      $this->prepare_file("$output_directory/$slug/$file", "$target_directory/$file");
+    }
+
   }
 }

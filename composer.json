@@ -1,0 +1,13 @@
+{
+    "name": "gakowalski/pot-pano-export",
+    "type": "project",
+    "require": {
+        "cocur/slugify": "^3.0"
+    },
+    "authors": [
+        {
+            "name": "Grzegorz Adam Kowalski",
+            "email": "grzegorz.adam.kowalski@outlook.com"
+        }
+    ]
+}

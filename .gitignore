@@ -2,3 +2,5 @@ config.php
 output/
 download/
 php.bat
+
+/vendor/
