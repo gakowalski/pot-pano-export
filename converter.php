@@ -109,6 +109,5 @@ class Converter {
     foreach ($to_copy as $file) {
       $this->prepare_file("$output_directory/$slug/$file", "$target_directory/$file");
     }
-
   }
 }
