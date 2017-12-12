@@ -1,7 +1,7 @@
 <?php
   $dev = true;
 
-  if ($dev) $path = '../output/bialka-tatrzanska/';
+  if ($dev) $path = '../output/baltow/';
   else $path = '';
 
   $lang = (isset($_GET['lang']))? $_GET['lang'] : 'pl';
@@ -16,8 +16,20 @@
   <script src="panolens.min.js"></script>
 </head>
 <body>
+  <div id="progress">
+    <div id="bar"></div>
+  </div>
+  <div id="info">
+    Lorem Ipsum jest tekstem stosowanym jako przykładowy wypełniacz w przemyśle poligraficznym. Został po raz pierwszy użyty w XV w. przez nieznanego drukarza do wypełnienia tekstem próbnej książki. Pięć wieków później zaczął być używany przemyśle elektronicznym, pozostając praktycznie niezmienionym. Spopularyzował się w latach 60. XX w. wraz z publikacją arkuszy Letrasetu, zawierających fragmenty Lorem Ipsum, a ostatnio z zawierającym różne wersje Lorem Ipsum oprogramowaniem przeznaczonym do realizacji druków na komputerach osobistych, jak Aldus PageMaker
+    <button id="read-text"></button>
+    <button id="stop-reading"></button>
+  </div>
+  <div id="container"></div>
   <script>
     var panorama, viewer;
+
+    PANOLENS.DataImage.FullscreenEnter = 'expand-arrows-alt.svg';
+    PANOLENS.DataImage.FullscreenLeave = 'expand-arrows-alt.svg';
 
     panorama = new PANOLENS.CubePanorama( [
           '<?php echo $path; ?>right.jpg', '<?php echo $path; ?>left.jpg',
@@ -25,6 +37,7 @@
           '<?php echo $path; ?>front.jpg', '<?php echo $path; ?>back.jpg',
     ] );
 
+    // based on: https://codepen.io/pchen66/pen/RgxeJM
     var bar = document.querySelector( '#bar' );
 
     function onProgressUpdate ( event ) {
@@ -39,8 +52,6 @@
     }
 
     panorama.addEventListener( 'progress', onProgressUpdate );
-
-    //panorama = new PANOLENS.ImagePanorama( 'building.jpg' );
 
     viewer = new PANOLENS.Viewer({
       container: document.querySelector( '#container' ), //< A DOM Element container
@@ -57,13 +68,100 @@
       autoReticleSelect: true,   //< Auto select a clickable target after dwellTime
       viewIndicator: false,      //< Adds an angle view indicator in upper left corner
       indicatorSize: 30,         //< Size of View Indicator
-      output: 'console'          //< Whether and where to output infospot position. Could be 'console' or 'overlay'
+      output: 'console',         //< Whether and where to output infospot position. Could be 'console' or 'overlay'
+
+      /* undocumented, unofficial, potentially broken */
+      // https://codepen.io/pchen66/pen/rGpoPv
+      /*
+      autoRotate: true,
+      autoRotateSpeed: 1,
+      autoRotateActivationDuration: 5000,
+      */
     });
 
     viewer.add(panorama);
+
+    /*
+    viewer.addUpdateCallback(function(){ });
+    */
+
+    function make_button(viewer, background_image, on_tap_function) {
+      // based on https://codepen.io/pchen66/pen/vZVyYr
+      var control = {
+        style: {
+          backgroundImage: 'url(' + background_image + ')',
+          width: '3rem'
+        },
+        onTap: on_tap_function
+      };
+
+      viewer.appendControlItem(control);
+    }
+
+    make_button(viewer, 'volume-up.svg', function () {
+      alert('turn down');
+    });
+
+    make_button(viewer, 'info-circle.svg', function () {
+      var display = document.getElementById('info').style.display;
+
+      if (display == 'block') {
+        display = 'none';
+      } else {
+        display = 'block';
+      }
+      document.getElementById('info').style.display = display;
+    });
+
+    make_button(viewer, 'search-minus.svg', function () {
+      var event = new Event('mousewheel');
+      event.wheelDelta = 120;
+      event.detail = 2;
+      viewer.getControl().domElement.dispatchEvent(event);
+    });
+
+    make_button(viewer, 'search-plus.svg', function () {
+      var event = new Event('mousewheel');
+      event.wheelDelta = -120;
+      event.detail = -2;
+      viewer.getControl().domElement.dispatchEvent(event);
+    });
+
+    make_button(viewer, 'arrow-circle-down.svg', function () {
+      var event = new Event('keydown');
+      event.keyCode = viewer.getControl().keys.BOTTOM;
+      window.dispatchEvent(event);
+      var event = new Event('keyup');
+      event.keyCode = viewer.getControl().keys.BOTTOM;
+      window.dispatchEvent(event);
+    });
+
+    make_button(viewer, 'arrow-circle-up.svg', function () {
+      var event = new Event('keydown');
+      event.keyCode = viewer.getControl().keys.UP;
+      window.dispatchEvent(event);
+      var event = new Event('keyup');
+      event.keyCode = viewer.getControl().keys.UP;
+      window.dispatchEvent(event);
+    });
+
+    make_button(viewer, 'arrow-circle-right.svg', function () {
+      var event = new Event('keydown');
+      event.keyCode = viewer.getControl().keys.RIGHT;
+      window.dispatchEvent(event);
+      var event = new Event('keyup');
+      event.keyCode = viewer.getControl().keys.RIGHT;
+      window.dispatchEvent(event);
+    });
+
+    make_button(viewer, 'arrow-circle-left.svg', function () {
+      var event = new Event('keydown');
+      event.keyCode = viewer.getControl().keys.LEFT;
+      window.dispatchEvent(event);
+      var event = new Event('keyup');
+      event.keyCode = viewer.getControl().keys.LEFT;
+      window.dispatchEvent(event);
+    });
+
   </script>
-  <div id="progress">
-    <div id="bar"></div>
-  </div>
-  <div id="container"></div>
 </body>
