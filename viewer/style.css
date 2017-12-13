@@ -38,20 +38,31 @@ html, body {
   transition: opacity 1s ease;
 }
 
+#text {
+  position: absolute;
+  margin: 1rem;
+}
+
+#title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-shadow: 0px 0px 5px white;
+  padding: 1rem;
+  text-align: center;
+}
+
 #info {
   background-color: lightgray;
-  position: absolute;
   max-width: 350px;
   height: auto;
   padding: 1rem;
   margin: 1%;
-  border-radius: 5%;
+  border-radius: 1rem;
   display: none;
+  float: left;
 }
 
-#read-text,
-#stop-reading {
-  background-image: url('play-circle.svg');
+#read-text {
   display: block;
   width: 2rem;
   height: 2rem;
@@ -62,11 +73,39 @@ html, body {
   cursor: pointer;
 }
 
-#stop-reading {
-  background-image: url('pause-circle.svg');
-  display: none;
+.play {
+  background-image: url('play-circle.svg');
 }
 
+.pause {
+  background-image: url('pause-circle.svg');
+}
+
+/*
 #container > div:nth-child(3) > span:nth-child(2) {
   width: 3rem !important;
+}
+*/
+
+#title,
+#container > div:nth-child(3) > span:nth-child(2),
+#container > div:nth-child(3) > span:nth-child(3),
+#container > div:nth-child(3) > span:nth-child(4),
+#container > div:nth-child(3) > span:nth-child(5),
+#container > div:nth-child(3) > span:nth-child(6),
+#container > div:nth-child(3) > span:nth-child(7),
+#container > div:nth-child(3) > span:nth-child(8),
+#container > div:nth-child(3) > span:nth-child(9),
+#container > div:nth-child(3) > span:nth-child(10) {
+  background-color: rgba(255,255,255,0.3);
+  border-radius: 1rem;
+}
+
+@media all and (max-width: 480px) {
+  #container > div:nth-child(3) > span:nth-child(7),
+  #container > div:nth-child(3) > span:nth-child(8),
+  #container > div:nth-child(3) > span:nth-child(9),
+  #container > div:nth-child(3) > span:nth-child(10) {
+    display: none;
+  }
 }

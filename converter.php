@@ -87,8 +87,10 @@ class Converter {
   public function prepare_output($target) {
     global $download_directory;
     global $output_directory;
+    global $translations_cache_desc;
 
     $title = $this->get_title($target, 'pl');
+    $title_en = $this->get_title($target, 'en');
     $slugify = new Slugify();
     $slug = $slugify->slugify($title);
     $this->prepare_folder("$output_directory/$slug");
@@ -108,6 +110,40 @@ class Converter {
 
     foreach ($to_copy as $file) {
       $this->prepare_file("$output_directory/$slug/$file", "$target_directory/$file");
+    }
+
+    $optional_to_copy = array(
+      'voice_pl.mp3',
+      'voice_en.mp3',
+    );
+
+    foreach ($optional_to_copy as $file) {
+      if (true === file_exists("$target_directory/$file")) {
+        $this->prepare_file("$output_directory/$slug/$file", "$target_directory/$file");
+      }
+    }
+
+    $translation = array('title' => array(), 'slug' => array());
+    foreach ($this->options['languages'] as $language) {
+      $title = $this->get_title($target, $language);
+      $translation['title'][$language] = $title;
+      $translation['slug'][$language] = $slugify->slugify(html_entity_decode($title, ENT_HTML5, 'UTF-8'));
+      if ($translation['slug'][$language] == '') {
+        $translation['slug'][$language] = $slugify->slugify($title_en);;
+      }
+    }
+
+    $translation_file = "$output_directory/$slug/title_translations.json";
+    if (false === file_exists($translation_file)) {
+      file_put_contents($translation_file, json_encode($translation));
+    }
+
+    if (!empty($translations_cache_desc)) {
+      $translation_file = "$output_directory/$slug/desc_translations.json";
+      if (false === file_exists($translation_file)) {
+        file_put_contents($translation_file, json_encode($translations_cache_desc));
+      }
+      $translations_cache_desc = array();
     }
   }
 }

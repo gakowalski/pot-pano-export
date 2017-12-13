@@ -4,6 +4,8 @@ class Kolor_Pantour extends Converter {
   public function convert($target) {
     global $download_directory;
     global $output_directory;
+    global $translations_cache_desc;
+    global $record_separator;
 
     parent::convert($target);
 
@@ -44,7 +46,35 @@ class Kolor_Pantour extends Converter {
         $this->prepare_file("$language_directory/infodata.swf", $this->target_url("$target/$server_path", $language));
       }
 
-      $this->prepare_archive("$language_directory/infodata.swf", $language_directory);
+      $uncompresed = $this->prepare_archive("$language_directory/infodata.swf", $language_directory);
+
+      if ($language == 'pl') {
+        $this->prepare_file("$target_directory/voice_pl.mp3", "$uncompresed/sounds/0.mp3");
+      }
+      if ($language == 'en') {
+        $this->prepare_file("$target_directory/voice_en.mp3", "$uncompresed/sounds/0.mp3");
+      }
+      if (!isset($translations_cache_desc[$language])) {
+        $files = array(
+          'texts/5.txt',
+          'texts/6.txt',
+          'texts/manual.txt',
+        );
+
+        foreach ($files as $file) {
+          $path = "$uncompresed/$file";
+          if (true === file_exists($path)) {
+            $description = file_get_contents($path);
+            $translations_cache_desc[$language] = str_replace($record_separator, ' ', $description);
+            break;
+          }
+        }
+
+        if (!isset($translations_cache_desc[$language])) {
+          throw new Exception("Couldn't setup translated description for language code '$language' in '$language_directory'
+          for '$target' !\n");
+        }
+      }
     }
   }
 
@@ -161,6 +191,7 @@ class Kolor_Pantour extends Converter {
       } else {
         echo "$path already decompressed\n";
       }
+      return $uncompressed;
     } else {
       throw new Exception("$path not found");
     }

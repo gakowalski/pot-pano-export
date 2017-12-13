@@ -68,6 +68,8 @@ class Flash_Panorama_Player extends Converter {
   }
 
   protected function process_data($path, $common_files, $language) {
+    global $translations_cache_desc;
+
     if (true === file_exists($path)) {
       $vt = new SimpleXMLElement(file_get_contents($path));
       if ($vt) {
@@ -75,7 +77,10 @@ class Flash_Panorama_Player extends Converter {
 
         foreach ($vt->hotspots->global->spot as $spot) {
           if ($spot['id'] == 'description_general') {
-            echo '[.] ' . $spot['text'] . "\n";
+            //echo '[.] ' . $spot['text'] . "\n";
+            if (!isset($translations_cache_desc[$language])) {
+              $translations_cache_desc[$language] = $spot['text']->__toString();
+            }
           }
           if ($spot['id'] == 'bar-title') {
             echo '[.] ' . $spot['url'] . "\n";

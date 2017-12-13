@@ -1,10 +1,22 @@
 <?php
   $dev = true;
 
-  if ($dev) $path = '../output/baltow/';
+  if ($dev) $path = '../output/wolinski-park-narodowy-wybrzeze-klifowe/';
   else $path = '';
 
   $lang = (isset($_GET['lang']))? $_GET['lang'] : 'pl';
+
+  switch ($lang) {
+    case 'sv': $lang = 'se'; break;
+    case 'zh': $lang = 'cn'; break;
+    case 'uk': $lang = 'ua'; break;
+    case 'he': $lang = 'il'; break;
+    case 'ja': $lang = 'jp'; break;
+    default:
+  }
+
+  $title_translations = json_decode(file_get_contents($path . 'title_translations.json'), true);
+  $desc_translations = json_decode(file_get_contents($path . 'desc_translations.json'), true);
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $lang; ?>" dir="ltr">
@@ -19,10 +31,14 @@
   <div id="progress">
     <div id="bar"></div>
   </div>
-  <div id="info">
-    Lorem Ipsum jest tekstem stosowanym jako przykładowy wypełniacz w przemyśle poligraficznym. Został po raz pierwszy użyty w XV w. przez nieznanego drukarza do wypełnienia tekstem próbnej książki. Pięć wieków później zaczął być używany przemyśle elektronicznym, pozostając praktycznie niezmienionym. Spopularyzował się w latach 60. XX w. wraz z publikacją arkuszy Letrasetu, zawierających fragmenty Lorem Ipsum, a ostatnio z zawierającym różne wersje Lorem Ipsum oprogramowaniem przeznaczonym do realizacji druków na komputerach osobistych, jak Aldus PageMaker
-    <button id="read-text"></button>
-    <button id="stop-reading"></button>
+  <div id="text">
+    <div id="title"><?php echo $title_translations['title'][$lang]; ?></div>
+    <div id="info">
+      <?php echo $desc_translations[$lang]; ?>
+      <?php if (($lang == 'pl' && file_exists($path.'voice_pl.mp3') || ($lang != 'pl' && file_exists($path.'voice_en.mp3')))): ?>
+      <button id="read-text" class="play"></button>
+      <?php endif; ?>
+    </div>
   </div>
   <div id="container"></div>
   <script>
@@ -85,12 +101,49 @@
     viewer.addUpdateCallback(function(){ });
     */
 
+    /* AUDIO */
+
+    var audio_listener = new THREE.AudioListener();
+
+    viewer.getCamera().add( audio_listener );
+
+    var music = new THREE.Audio( audio_listener );
+    var audioLoader = new THREE.AudioLoader();
+
+    audioLoader.load( '<?php echo $path; ?>music.mp3', function( buffer ) {
+      music.setBuffer( buffer );
+      music.setLoop( true );
+      music.setVolume( 0.5 );
+      music.play();
+    });
+
+    /* CONTROLS */
+
+    function toggle(element) {
+      var display = element.style.display;
+
+      if (display == 'block') {
+        display = 'none';
+      } else {
+        display = 'block';
+      }
+      element.style.display = display;
+    }
+
+    function toggle_music() {
+      if (music.isPlaying === true) {
+        music.pause();
+      } else {
+        music.play();
+      }
+    }
+
     function make_button(viewer, background_image, on_tap_function) {
       // based on https://codepen.io/pchen66/pen/vZVyYr
       var control = {
         style: {
           backgroundImage: 'url(' + background_image + ')',
-          width: '3rem'
+          //width: '3rem'
         },
         onTap: on_tap_function
       };
@@ -98,32 +151,23 @@
       viewer.appendControlItem(control);
     }
 
-    make_button(viewer, 'volume-up.svg', function () {
-      alert('turn down');
-    });
+    make_button(viewer, 'volume-up.svg', toggle_music);
 
     make_button(viewer, 'info-circle.svg', function () {
-      var display = document.getElementById('info').style.display;
-
-      if (display == 'block') {
-        display = 'none';
-      } else {
-        display = 'block';
-      }
-      document.getElementById('info').style.display = display;
+      toggle(document.getElementById('info'));
     });
 
     make_button(viewer, 'search-minus.svg', function () {
       var event = new Event('mousewheel');
       event.wheelDelta = 120;
-      event.detail = 2;
+      event.detail = 2*2;
       viewer.getControl().domElement.dispatchEvent(event);
     });
 
     make_button(viewer, 'search-plus.svg', function () {
       var event = new Event('mousewheel');
       event.wheelDelta = -120;
-      event.detail = -2;
+      event.detail = -2*2;
       viewer.getControl().domElement.dispatchEvent(event);
     });
 
@@ -162,6 +206,45 @@
       event.keyCode = viewer.getControl().keys.LEFT;
       window.dispatchEvent(event);
     });
+
+    <?php if (($lang == 'pl' && file_exists($path.'voice_pl.mp3') || ($lang != 'pl' && file_exists($path.'voice_en.mp3')))): ?>
+    var voice = new THREE.Audio( audio_listener );
+
+    audioLoader.load( '<?php echo $path; ?>voice_<?php echo ($lang == 'pl')? 'pl' : 'en'; ?>.mp3', function( buffer ) {
+      voice.setBuffer( buffer );
+      voice.setLoop( false );
+      voice.setVolume( 0.5 );
+    });
+
+    var music_state;
+
+    function toggle_voice() {
+      var e = document.getElementById('read-text');
+      if (e.classList.contains('play')) {
+        e.classList.remove('play');
+        e.classList.add('pause');
+      } else {
+        e.classList.remove('pause');
+        e.classList.add('play');
+      }
+
+      if (voice.isPlaying === true) {
+        voice.pause();
+        if (music_state == true) {
+          music.play();
+        }
+      } else {
+        if (music.isPlaying === true) {
+          music_state = true;
+          music.pause();
+        } else {
+          music_state = false;
+        }
+        voice.play();
+      }
+    }
+    document.getElementById('read-text').addEventListener('click', toggle_voice, false);
+    <?php endif; ?>
 
   </script>
 </body>
