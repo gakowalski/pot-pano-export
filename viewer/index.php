@@ -171,17 +171,19 @@
     });
 
     make_button(viewer, 'search-minus.svg', function () {
-      var event = new Event('mousewheel');
-      event.wheelDelta = 120;
-      event.detail = 2*2;
-      viewer.getControl().domElement.dispatchEvent(event);
+      var zoom = viewer.getCamera().zoom;
+      if (zoom > 1) {
+        viewer.getCamera().zoom -= 0.5;
+      }
+      viewer.getCamera().updateProjectionMatrix();
     });
 
     make_button(viewer, 'search-plus.svg', function () {
-      var event = new Event('mousewheel');
-      event.wheelDelta = -120;
-      event.detail = -2*2;
-      viewer.getControl().domElement.dispatchEvent(event);
+      var zoom = viewer.getCamera().zoom;
+      if (zoom < 2) {
+        viewer.getCamera().zoom += 0.5;
+      }
+      viewer.getCamera().updateProjectionMatrix();
     });
 
     make_button(viewer, 'arrow-circle-down.svg', function () {

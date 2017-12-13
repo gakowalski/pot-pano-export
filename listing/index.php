@@ -3,7 +3,7 @@
 <body>
   <h1>Panoramas</h1>
   <ul><?php foreach (scandir('.') as $folder): ?>
-    <?php if ($folder == '.' || $folder == '..') continue; ?>
+    <?php if ($folder == '.' || $folder == '..' || $folder == 'index.php') continue; ?>
     <li>
       Folder <a href="<?php echo $folder; ?>"><?php echo $folder; ?></a>
       <ul>
