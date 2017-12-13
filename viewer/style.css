@@ -24,7 +24,7 @@ html, body {
 #progress {
   position: absolute;
   width: 100%;
-  height: 3px;
+  height: 1rem;
 }
 
 #bar {
@@ -62,6 +62,10 @@ html, body {
   float: left;
 }
 
+body.rtl #info {
+  float: right;
+}
+
 #read-text {
   display: block;
   width: 2rem;
@@ -71,6 +75,10 @@ html, body {
   float: right;
   margin: 1rem;
   cursor: pointer;
+}
+
+body.rtl #read-text {
+  float: left;
 }
 
 .play {
@@ -99,6 +107,18 @@ html, body {
 #container > div:nth-child(3) > span:nth-child(10) {
   background-color: rgba(255,255,255,0.3);
   border-radius: 1rem;
+}
+
+body.rtl #container > div:nth-child(3) > span:nth-child(2),
+body.rtl #container > div:nth-child(3) > span:nth-child(3),
+body.rtl #container > div:nth-child(3) > span:nth-child(4),
+body.rtl #container > div:nth-child(3) > span:nth-child(5),
+body.rtl #container > div:nth-child(3) > span:nth-child(6),
+body.rtl #container > div:nth-child(3) > span:nth-child(7),
+body.rtl #container > div:nth-child(3) > span:nth-child(8),
+body.rtl #container > div:nth-child(3) > span:nth-child(9),
+body.rtl #container > div:nth-child(3) > span:nth-child(10) {
+  float: left !important;
 }
 
 @media all and (max-width: 480px) {

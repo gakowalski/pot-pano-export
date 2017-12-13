@@ -5,12 +5,18 @@
   else $path = '';
 
   $lang = (isset($_GET['lang']))? $_GET['lang'] : 'pl';
+  $lang_2 = $lang;
+  $text_direction = 'ltr'; //< default value, can be changed later
 
   switch ($lang) {
     case 'sv': $lang = 'se'; break;
     case 'zh': $lang = 'cn'; break;
     case 'uk': $lang = 'ua'; break;
-    case 'he': $lang = 'il'; break;
+    case 'he':
+      $lang = 'il';
+    case 'il':
+      $text_direction = 'rtl';
+      break;
     case 'ja': $lang = 'jp'; break;
     default:
   }
@@ -19,7 +25,7 @@
   $desc_translations = json_decode(file_get_contents($path . 'desc_translations.json'), true);
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $lang; ?>" dir="ltr">
+<html lang="<?php echo $lang_2; ?>" dir="<?php echo $text_direction; ?>">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
@@ -27,7 +33,7 @@
   <script src="three.min.js"></script>
   <script src="panolens.min.js"></script>
 </head>
-<body>
+<body class="<?php echo $text_direction; ?>">
   <div id="progress">
     <div id="bar"></div>
   </div>
@@ -151,6 +157,15 @@
       viewer.appendControlItem(control);
     }
 
+    function press_key(key) {
+      var event = new Event('keydown');
+      event.keyCode = key;
+      window.dispatchEvent(event);
+      var event = new Event('keyup');
+      event.keyCode = key;
+      window.dispatchEvent(event);
+    }
+
     make_button(viewer, 'volume-up.svg', toggle_music);
 
     make_button(viewer, 'info-circle.svg', function () {
@@ -172,39 +187,19 @@
     });
 
     make_button(viewer, 'arrow-circle-down.svg', function () {
-      var event = new Event('keydown');
-      event.keyCode = viewer.getControl().keys.BOTTOM;
-      window.dispatchEvent(event);
-      var event = new Event('keyup');
-      event.keyCode = viewer.getControl().keys.BOTTOM;
-      window.dispatchEvent(event);
+      press_key(viewer.getControl().keys.BOTTOM);
     });
 
     make_button(viewer, 'arrow-circle-up.svg', function () {
-      var event = new Event('keydown');
-      event.keyCode = viewer.getControl().keys.UP;
-      window.dispatchEvent(event);
-      var event = new Event('keyup');
-      event.keyCode = viewer.getControl().keys.UP;
-      window.dispatchEvent(event);
+      press_key(viewer.getControl().keys.UP);
     });
 
-    make_button(viewer, 'arrow-circle-right.svg', function () {
-      var event = new Event('keydown');
-      event.keyCode = viewer.getControl().keys.RIGHT;
-      window.dispatchEvent(event);
-      var event = new Event('keyup');
-      event.keyCode = viewer.getControl().keys.RIGHT;
-      window.dispatchEvent(event);
+    make_button(viewer, 'arrow-circle-<?php echo $text_direction == 'ltr'? 'right' : 'left'; ?>.svg', function () {
+      press_key(viewer.getControl().keys.<?php echo strtoupper($text_direction == 'ltr'? 'right' : 'left'); ?>);
     });
 
-    make_button(viewer, 'arrow-circle-left.svg', function () {
-      var event = new Event('keydown');
-      event.keyCode = viewer.getControl().keys.LEFT;
-      window.dispatchEvent(event);
-      var event = new Event('keyup');
-      event.keyCode = viewer.getControl().keys.LEFT;
-      window.dispatchEvent(event);
+    make_button(viewer, 'arrow-circle-<?php echo $text_direction == 'ltr'? 'left' : 'right'; ?>.svg', function () {
+      press_key(viewer.getControl().keys.<?php echo strtoupper($text_direction == 'ltr'? 'left' : 'right'); ?>);
     });
 
     <?php if (($lang == 'pl' && file_exists($path.'voice_pl.mp3') || ($lang != 'pl' && file_exists($path.'voice_en.mp3')))): ?>
