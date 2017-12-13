@@ -2,5 +2,6 @@ config.php
 output/
 download/
 php.bat
-
 /vendor/
+viewer/three*.js
+viewer/panolens*.js

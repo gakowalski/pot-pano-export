@@ -72,7 +72,7 @@ class Kolor_Pantour extends Converter {
 
         if (!isset($translations_cache_desc[$language])) {
           throw new Exception("Couldn't setup translated description for language code '$language' in '$language_directory'
-          for '$target' !\n");
+          for '$target' !\n" . $this->get_title($target, 'pl') . "\n");
         }
       }
     }
@@ -186,7 +186,7 @@ class Kolor_Pantour extends Converter {
       $uncompressed = "$destination/" . $this->archive_directory($path);
       if (false === file_exists($uncompressed)) {
         echo "Decompressing $path...\n";
-        $decompile_command = "$java -jar $decompiler -cli -export sound,text $uncompressed $path";
+        $decompile_command = "$java -jar $decompiler -cli -export sound,text,image $uncompressed $path";
         system($decompile_command);
       } else {
         echo "$path already decompressed\n";

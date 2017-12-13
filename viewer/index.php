@@ -1,7 +1,5 @@
 <?php
-  $dev = true;
-
-  if ($dev) $path = '../output/wolinski-park-narodowy-wybrzeze-klifowe/';
+  if (isset($_GET['dev'])) $path = '../output/wolinski-park-narodowy-wybrzeze-klifowe/';
   else $path = '';
 
   $lang = (isset($_GET['lang']))? $_GET['lang'] : 'pl';
@@ -240,6 +238,5 @@
     }
     document.getElementById('read-text').addEventListener('click', toggle_voice, false);
     <?php endif; ?>
-
   </script>
 </body>

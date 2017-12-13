@@ -145,5 +145,9 @@ class Converter {
       }
       $translations_cache_desc = array();
     }
+
+    $command = "copy /y viewer\\*.* $output_directory\\$slug\\";
+    system($command);
+    //echo $command;
   }
 }
