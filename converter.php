@@ -8,10 +8,16 @@ class Converter {
 
   public function __construct($options) {
     $this->options = $options;
+    /*
     $this->initial_camera_settings = array(
       'x' => 0,
       'y' => 0,
       'z' => 0,
+      'fov' => 'default',
+    );
+    */
+    $this->initial_camera_settings = array(
+      'vector' => '0, 0 ,0',
       'fov' => 'default',
     );
   }
@@ -154,10 +160,12 @@ class Converter {
     }
 
     $camera_init_config_file = "$output_directory/$slug/camera.json";
+    if (false === file_exists($camera_init_config_file)) {
       file_put_contents($camera_init_config_file, json_encode($this->initial_camera_settings));
+    }
 
     $command = "copy /y viewer\\*.* $output_directory\\$slug\\";
-    //system($command);
     echo $command;
+    system($command);
   }
 }

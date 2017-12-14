@@ -1,3 +1,4 @@
+<?php $dev = (isset($_GET['dev'])? '&dev' : ''); ?>
 <!DOCTYPE html>
 <html>
 <body>
@@ -5,7 +6,7 @@
   <ul><?php foreach (scandir('.') as $folder): ?>
     <?php if ($folder == '.' || $folder == '..' || $folder == 'index.php') continue; ?>
     <li>
-      Folder <a href="<?php echo $folder; ?>"><?php echo $folder; ?></a>
+      Folder <a href="<?php echo "$folder"; ?>"><?php echo $folder; ?></a>
       <ul>
       <?php
         $path = "$folder/title_translations.json";
@@ -15,7 +16,7 @@
       ?>
       <li>
         <?php echo $language_code; ?> -
-        <a href="<?php echo "$folder/?lang=$language_code"; ?>"><?php echo $translation; ?></a>
+        <a href="<?php echo "$folder/?lang=$language_code$dev"; ?>"><?php echo $translation; ?></a>
       </li>
       <?php endforeach; ?>
       <?php endif; ?>

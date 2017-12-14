@@ -1,5 +1,12 @@
 <?php
 
+/*
+
+  Flash Panorama Player docs:
+  * https://santafesir.com/flash/vt/tutorials/parameters.html
+
+ */
+
 class Flash_Panorama_Player extends Converter {
   public function convert($target) {
     global $download_directory;

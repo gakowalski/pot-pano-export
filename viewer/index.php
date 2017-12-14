@@ -1,6 +1,5 @@
 <?php
-  if (isset($_GET['dev'])) $path = '../output/kopalnia-soli-w-wieliczce-widok-z-zewnatrz/';
-  else $path = '';
+  $path = '';
 
   $lang = (isset($_GET['lang']))? $_GET['lang'] : 'pl';
   $lang_2 = $lang;
@@ -85,20 +84,14 @@
 
     panorama.addEventListener( 'progress', onProgressUpdate );
     panorama.addEventListener('load', function() {
+      /*
       viewer.getControl().rotateLeft(<?php echo $camera_config['x']; ?>);
       viewer.getControl().rotateUp(<?php echo $camera_config['y']; ?>);
       viewer.getControl().update();
+      */
     });
     panorama.addEventListener( 'enter-fade-start', function() {
-      /*
-      viewer.tweenControlCenter( new THREE.Vector3(
-        <?php echo $camera_config['x']; ?>,
-        <?php echo $camera_config['y']; ?>,
-        <?php echo $camera_config['z']; ?>
-      ),
-        0
-      );*/
-      //viewer.tweenControlCenter( new THREE.Vector3(5000, 397.57, -3184.04), 0);
+      viewer.tweenControlCenter( new THREE.Vector3(<?php echo $camera_config['vector']; ?>), 0);
     });
 
     viewer = new PANOLENS.Viewer({
@@ -115,7 +108,7 @@
       cameraFov: <?php echo $camera_config['fov']; ?>,
       <?php endif; ?>
       reverseDragging: false,    //< Reverse orbit control direction
-      enableReticle: false,      //< Enable reticle for mouseless interaction
+      enableReticle: <?php echo (isset($_GET['dev'])? 'true' : 'false'); ?>,      //< Enable reticle for mouseless interaction
       dwellTime: 1500,           //< Dwell time for reticle selection in millisecond
       autoReticleSelect: true,   //< Auto select a clickable target after dwellTime
       viewIndicator: false,      //< Adds an angle view indicator in upper left corner
