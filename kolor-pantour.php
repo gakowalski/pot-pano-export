@@ -86,8 +86,8 @@ class Kolor_Pantour extends Converter {
 
         foreach ($vt->plugin as $plugin) {
     			if ($plugin['name'] == 'maps') {
-    				echo '[.] ' . $plugin['lat'] . ',' . $plugin['lng'] . "\n";
-    				echo '[.] ' . $plugin->spot['lat'] . ',' . $plugin->spot['lng'] . "\n";
+    				// echo '[.] ' . $plugin['lat'] . ',' . $plugin['lng'] . "\n";
+    				// echo '[.] ' . $plugin->spot['lat'] . ',' . $plugin->spot['lng'] . "\n";
     			}
           if ($plugin['name'] == 'helpScreen') {
             $to_download[$plugin['url']->__toString()] = 'infodata.swf';
@@ -109,10 +109,14 @@ class Kolor_Pantour extends Converter {
       if ($vt0) {
         $image = $vt0->image;
         $tile_size = $image['tilesize'];
-        echo "[.] Tile size: $tile_size\n";
+        // echo "[.] Tile size: $tile_size\n";
         $highest_level = $image->level[0];
-        echo "[.] Wall width: ". $highest_level['tiledimagewidth'] . "\n";
-        echo "[.] Wall height: ". $highest_level['tiledimageheight'] . "\n";
+        // echo "[.] Wall width: ". $highest_level['tiledimagewidth'] . "\n";
+        // echo "[.] Wall height: ". $highest_level['tiledimageheight'] . "\n";
+
+        //$this->initial_camera_settings['x'] = $vt0->panoview['h']->__toString();
+        //$this->initial_camera_settings['y'] = $vt0->panoview['v']->__toString();
+        $this->initial_camera_settings['fov'] = $vt0->panoview['fov']->__toString();
 
         $left = $highest_level->left['url'];
         $right = $highest_level->right['url'];

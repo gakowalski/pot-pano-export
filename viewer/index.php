@@ -1,5 +1,5 @@
 <?php
-  if (isset($_GET['dev'])) $path = '../output/wolinski-park-narodowy-wybrzeze-klifowe/';
+  if (isset($_GET['dev'])) $path = '../output/kopalnia-soli-w-wieliczce-widok-z-zewnatrz/';
   else $path = '';
 
   $lang = (isset($_GET['lang']))? $_GET['lang'] : 'pl';
@@ -21,10 +21,22 @@
 
   $title_translations = json_decode(file_get_contents($path . 'title_translations.json'), true);
   $desc_translations = json_decode(file_get_contents($path . 'desc_translations.json'), true);
+  if (true === file_exists($path . 'camera.json')) {
+    $camera_config = json_decode(file_get_contents($path . 'camera.json'), true);
+  } else {
+    $camera_config = array(
+      'x' => 0,
+      'y' => 0,
+      'z' => 0,
+      'fov' => 'default',
+    );
+  }
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $lang_2; ?>" dir="<?php echo $text_direction; ?>">
 <head>
+  <title><?php echo $title_translations['title'][$lang]; ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
   <link href="style.css" rel="stylesheet"/>
@@ -72,6 +84,22 @@
     }
 
     panorama.addEventListener( 'progress', onProgressUpdate );
+    panorama.addEventListener('load', function() {
+      viewer.getControl().rotateLeft(<?php echo $camera_config['x']; ?>);
+      viewer.getControl().rotateUp(<?php echo $camera_config['y']; ?>);
+      viewer.getControl().update();
+    });
+    panorama.addEventListener( 'enter-fade-start', function() {
+      /*
+      viewer.tweenControlCenter( new THREE.Vector3(
+        <?php echo $camera_config['x']; ?>,
+        <?php echo $camera_config['y']; ?>,
+        <?php echo $camera_config['z']; ?>
+      ),
+        0
+      );*/
+      //viewer.tweenControlCenter( new THREE.Vector3(5000, 397.57, -3184.04), 0);
+    });
 
     viewer = new PANOLENS.Viewer({
       container: document.querySelector( '#container' ), //< A DOM Element container
@@ -81,13 +109,17 @@
       autoHideControlBar: false, //< Auto hide control bar
       autoHideInfospot: true,    //< Auto hide infospots
       horizontalView: false,     //< Allow only horizontal camera control
-      cameraFov: 60,             //< Camera field of view in degree
+      <?php if ($camera_config['fov'] == 'default'): ?>
+      cameraFov: 90,             //< Camera field of view in degree
+      <?php else: ?>
+      cameraFov: <?php echo $camera_config['fov']; ?>,
+      <?php endif; ?>
       reverseDragging: false,    //< Reverse orbit control direction
       enableReticle: false,      //< Enable reticle for mouseless interaction
       dwellTime: 1500,           //< Dwell time for reticle selection in millisecond
       autoReticleSelect: true,   //< Auto select a clickable target after dwellTime
       viewIndicator: false,      //< Adds an angle view indicator in upper left corner
-      indicatorSize: 30,         //< Size of View Indicator
+      indicatorSize: 60,         //< Size of View Indicator
       output: 'console',         //< Whether and where to output infospot position. Could be 'console' or 'overlay'
 
       /* undocumented, unofficial, potentially broken */

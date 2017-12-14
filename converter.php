@@ -4,9 +4,16 @@ use Cocur\Slugify\Slugify;
 
 class Converter {
   protected $options;
+  protected $initial_camera_settings;
 
   public function __construct($options) {
     $this->options = $options;
+    $this->initial_camera_settings = array(
+      'x' => 0,
+      'y' => 0,
+      'z' => 0,
+      'fov' => 'default',
+    );
   }
 
   public function convert($target) {
@@ -146,8 +153,11 @@ class Converter {
       $translations_cache_desc = array();
     }
 
+    $camera_init_config_file = "$output_directory/$slug/camera.json";
+      file_put_contents($camera_init_config_file, json_encode($this->initial_camera_settings));
+
     $command = "copy /y viewer\\*.* $output_directory\\$slug\\";
-    system($command);
-    //echo $command;
+    //system($command);
+    echo $command;
   }
 }

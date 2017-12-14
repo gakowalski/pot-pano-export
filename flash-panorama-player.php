@@ -75,6 +75,8 @@ class Flash_Panorama_Player extends Converter {
       if ($vt) {
         $to_download = array();
 
+
+
         foreach ($vt->hotspots->global->spot as $spot) {
           if ($spot['id'] == 'description_general') {
             //echo '[.] ' . $spot['text'] . "\n";
@@ -83,7 +85,7 @@ class Flash_Panorama_Player extends Converter {
             }
           }
           if ($spot['id'] == 'bar-title') {
-            echo '[.] ' . $spot['url'] . "\n";
+            //echo '[.] ' . $spot['url'] . "\n";
           }
         }
 
@@ -96,6 +98,13 @@ class Flash_Panorama_Player extends Converter {
         if (!isset($common_files['mp3/' . $music['name']. '_loop_1.mp3'])) {
           $common_files['mp3/' . $music['name']. '_loop_1.mp3'] = 'music.mp3';
         }
+
+/*
+        $this->initial_camera_settings['y'] = 0.3 * $parameters['panHome'];
+        $this->initial_camera_settings['x'] = 0.556 * $parameters['tiltHome'];
+        //$this->initial_camera_settings['z'] = $parameters['zoomHome'];
+        $this->initial_camera_settings['fov'] = 80 * $parameters['zoomHome'];
+        */
 
         return array('common_files' => $common_files, 'language_dependent' => $to_download);
       } else {
