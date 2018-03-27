@@ -1,6 +1,9 @@
 <?php $dev = (isset($_GET['dev'])? '&dev' : ''); ?>
 <!DOCTYPE html>
 <html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
 <body>
   <h1>Panoramas</h1>
   <ul><?php foreach (scandir('.') as $folder): ?>
