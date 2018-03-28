@@ -167,5 +167,9 @@ class Converter {
     $command = "copy /y viewer\\*.* $output_directory\\$slug\\";
     echo $command;
     system($command);
+
+    $command = "copy /y licenses\\*.* $output_directory\\$slug\\";
+    echo $command;
+    system($command);
   }
 }

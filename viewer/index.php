@@ -2,21 +2,7 @@
   $path = '';
 
   $lang = (isset($_GET['lang']))? $_GET['lang'] : 'pl';
-  $lang_2 = $lang;
-  $text_direction = 'ltr'; //< default value, can be changed later
-
-  switch ($lang) {
-    case 'sv': $lang = 'se'; break;
-    case 'zh': $lang = 'cn'; break;
-    case 'uk': $lang = 'ua'; break;
-    case 'he':
-      $lang = 'il';
-    case 'il':
-      $text_direction = 'rtl';
-      break;
-    case 'ja': $lang = 'jp'; break;
-    default:
-  }
+  $text_direction = ($lang == 'he') ? 'rtl' : 'ltr';
 
   $title_translations = json_decode(file_get_contents($path . 'title_translations.json'), true);
   $desc_translations = json_decode(file_get_contents($path . 'desc_translations.json'), true);
@@ -33,7 +19,7 @@
 
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $lang_2; ?>" dir="<?php echo $text_direction; ?>">
+<html lang="<?php echo $lang; ?>" dir="<?php echo $text_direction; ?>">
 <head>
   <title><?php echo $title_translations['title'][$lang]; ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
